@@ -1,3 +1,7 @@
+import numpy as np
+np.random.seed(1234)
+import tensorflow as tf
+tf.set_random_seed(1234)
 from keras.models import Sequential
 from sklearn.datasets import load_iris
 from keras.layers import Dense
@@ -25,13 +29,13 @@ class BaseModel():
 
 class MlpModel(BaseModel):
     def __init__(self,**kwargs):
-        super(MlpModel, self).__init__(kwargs)
+        super(MlpModel, self).__init__(**kwargs)
 
     def load_data(self,**kwargs):
         data = load_iris()
         X,y=data.data,data.target
         self.class_names=data.target_names
-        for i,class_name in self.class_names:
+        for i,class_name in enumerate(self.class_names):
             self.target_class_map[i]=class_name
 
 
@@ -45,14 +49,13 @@ class MlpModel(BaseModel):
         x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
 
         model = Sequential()
-        model.add(Dense(128,activation='relu',input_dim=(4,)))
+        model.add(Dense(128,activation='relu',input_shape=(4,)))
         model.add(Dense(128,activation='relu'))
         model.add(Dense(3,activation='softmax'))
 
         model.compile(optimizer='rmsprop',loss='categorical_crossentropy',metrics=['accuracy'])
 
-        model.fit(x_train,y_train)
-        self.model=model
+        self.model=model.fit(x_train,y_train,**kwargs)
 
     def evaluate(self,x_test,y_test,**kwargs):
         y_pred = self.model.predict_classes(x_test)
