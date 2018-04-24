@@ -8,21 +8,23 @@ from keras.layers import Dense
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from abc import ABC, abstractmethod
 
 
-class BaseModel():
+class BaseModel(ABC):
 
     def __init__(self,**kwargs):
         self.model=None
         self.class_names=None
         self.target_class_map={}
 
+    @abstractmethod
     def load_data(self,**kwargs):
         pass
-
+    @abstractmethod
     def train(self,**kwargs):
         pass
-
+    @abstractmethod
     def evaluate(self,**kwargs):
         pass
 
